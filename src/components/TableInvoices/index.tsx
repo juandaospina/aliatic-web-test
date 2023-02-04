@@ -8,6 +8,7 @@ import {
 
 import { Invoice } from "../../types";
 import { getInvoices, promiseDeleteInvoice } from "../../services";
+import { ModalInvoice } from "../Modal";
 
 const columns: GridColDef[] = [
   { field: "InvoiceId", headerName: "ID", width: 100 },
@@ -18,11 +19,14 @@ const columns: GridColDef[] = [
 export const TableInvoices = () => {
   const [invoices, setInvoices] = useState<Invoice[] | undefined | any>([]);
   const [seletedRows, setSeletedRows] = useState<Invoice[] | undefined | any>([]);
+  const [viewInvoice, setViewInvoice] = useState<boolean>(true);
+  const [openModal, setOpenModal] = useState<boolean>(false);
 
   const handleRowsSelection = (ids: GridSelectionModel) => {
     const selected = ids.map((id: GridRowId) =>
       invoices.find((row: Invoice) => row.InvoiceId === id)
     );
+    (selected.length === 1) ? setViewInvoice(false) : setViewInvoice(true);
     setSeletedRows(selected);
   };
 
@@ -30,6 +34,10 @@ export const TableInvoices = () => {
     if (selected.length === 0) return;
     const deleteInvoice = await promiseDeleteInvoice(selected);
   };
+
+  const handleViewInvoice = () => {
+    setOpenModal(true);
+  }
 
   useEffect(() => {
     (async () => {
@@ -61,6 +69,18 @@ export const TableInvoices = () => {
       >
         Eliminar
       </button>
+
+      <button
+        className="btn btn-outline-primary mt-4 ms-3"
+        onClick={handleViewInvoice}
+        disabled={viewInvoice}
+      >
+        Ver detalle
+      </button>
+
+      {
+        openModal && (<ModalInvoice invoice={seletedRows} openModal={openModal}/>)
+      }
     </div>
   );
 };

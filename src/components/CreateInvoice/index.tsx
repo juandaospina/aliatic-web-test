@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 
 import { instance } from "../../api";
-import "../../styles/CreateInvoice.css";
 
 const initialState = {
   date: "",
